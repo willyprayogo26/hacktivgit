@@ -1,6 +1,6 @@
 const baseUrl = 'http://localhost:3000'
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#user").hide()
     $(".container").hide()
 })
@@ -8,105 +8,111 @@ $(document).ready(function() {
 function search(val) {
     $.ajax({
         url: `${baseUrl}/users/starred/search?name=${val}`,
-        method: 'GET'
+        method: 'GET',
+        headers: { token: localStorage.getItem('token')}
     })
-    .done(function(repo) {
-        let html = ''
-        repo.forEach(e => {
-            html += `<li><a href="${e.html_url}">${e.full_name}</a></li>`
-        });
-        $('#repo_filter').empty()
-        $('#repo_filter').append(html)
-    })
-    .fail(function(err) {
-        console.log(err)
-    })
+        .done(function (repo) {
+            let html = ''
+            repo.forEach(e => {
+                html += `<li><a href="${e.html_url}">${e.full_name}</a></li>`
+            });
+            $('#repo_filter').empty()
+            $('#repo_filter').append(html)
+        })
+        .fail(function (err) {
+            console.log(err)
+        })
 }
 
 function search_user(val) {
     $.ajax({
         url: `${baseUrl}/users/${val}`,
-        method: 'GET'
+        method: 'GET',
+        headers: { token: localStorage.getItem('token')}
     })
-    .done(function(repo) {
-        let html = ''
-        repo.items.forEach(e => {
-            html += `<li><a href="${e.html_url}">${e.full_name}</a></li>`
-        });
-        $('#repo_user').empty()
-        $('#repo_user').append(html)
-    })
-    .fail(function(err) {
-        Swal.fire({
-            title: 'User not found',
-            animation: false,
-            customClass: {
-              popup: 'animated swing'
-            }
+        .done(function (repo) {
+            let html = ''
+            repo.items.forEach(e => {
+                html += `<li><a href="${e.html_url}">${e.full_name}</a></li>`
+            });
+            $('#repo_user').empty()
+            $('#repo_user').append(html)
         })
-    })
+        .fail(function (err) {
+            Swal.fire({
+                title: 'User not found',
+                animation: false,
+                customClass: {
+                    popup: 'animated swing'
+                }
+            })
+        })
 }
 
 function star() {
     $.ajax({
         url: `${baseUrl}/users/starred`,
-        method: 'GET'
+        method: 'GET',
+        headers: { "token": localStorage.getItem('token')}
     })
-    .done(function(repo) {
-        let html = ''
-        repo.forEach(e => {
-            html += `<li><a href="${e.html_url}">${e.full_name}</a></li>`
-        });
-        $('#starred').empty()
-        $('#starred').append(html)
-    })
-    .fail(function(err) {
-        console.log(err)
-    })
+        .done(function (repo) {
+            let html = ''
+            repo.forEach(e => {
+                html += `<li><a href="${e.html_url}">${e.full_name}</a></li>`
+            });
+            $('#starred').empty()
+            $('#starred').append(html)
+        })
+        .fail(function (err) {
+            console.log(err)
+        })
 }
 
 function unstar(val) {
     $.ajax({
         url: `${baseUrl}/users/unstar/willyprayogo26/${val}`,
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: { token: localStorage.getItem('token')}
     })
-    .done(function(repo) {
-        Swal.fire({
-            type: 'success',
-            title: 'Repository successfully unstar',
-            showConfirmButton: false,
-            timer: 1500
-        })
+        .done(function (repo) {
+            Swal.fire({
+                type: 'success',
+                title: 'Repository successfully unstar',
+                showConfirmButton: false,
+                timer: 1500
+            })
 
-        $('#input3').val('')
-        star()
-    })
-    .fail(function(err) {
-        Swal.fire({
-            title: 'Repository not found',
-            animation: false,
-            customClass: {
-              popup: 'animated swing'
-            }
+            $('#input3').val('')
+            star()
         })
-    })
+        .fail(function (err) {
+            Swal.fire({
+                title: 'Repository not found',
+                animation: false,
+                customClass: {
+                    popup: 'animated swing'
+                }
+            })
+        })
 }
 
 function onSignIn(googleUser) {
-    if(!localStorage.getItem('token')) {
+    if (!localStorage.getItem('token')) {
         const id_token = googleUser.getAuthResponse().id_token
         $.post('http://localhost:3000/google-login', {
             token: id_token
         })
-        .done(response => {
-            localStorage.setItem('token', id_token)
-            localStorage.setItem('name', response.name)
-            localStorage.setItem('email', response.email)
-            localStorage.setItem('picture', response.picture)
-        })
-        .fail(err => {
-            console.log(err)
-        })
+            .done(response => {
+                localStorage.setItem('token', response.token)
+                localStorage.setItem('name', response.name)
+                localStorage.setItem('email', response.email)
+                localStorage.setItem('picture', response.picture)
+
+               star()
+            })
+            .fail(err => {
+                console.log(err)
+            })
     }
     const profile = googleUser.getBasicProfile();
     // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
@@ -130,16 +136,18 @@ function onSignIn(googleUser) {
     $('#welcome').empty()
     $('#welcome').append(welcome)
 
-    star()
+    if (localStorage.getItem('token')) {
+        star()
+    }
 }
 
 function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
-      console.log('User signed out.');
-      localStorage.clear()
+        console.log('User signed out.');
+        localStorage.clear()
     });
-    
+
     $("#user").hide()
     $(".container").hide()
     $('.g-signin2').show()

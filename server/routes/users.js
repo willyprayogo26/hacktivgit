@@ -1,10 +1,10 @@
 const router = require('express').Router()
-const { userController } = require('../controllers')
+const { UserController } = require('../controllers')
 
-router.get('/starred', userController.getAllStarred)
-router.get('/starred/search', userController.getRepoByFilter)
-router.post('/create', userController.createRepo)
-router.get('/:username', userController.getRepoByUsername)
-router.delete('/unstar/:username/:reponame', userController.unstarRepo)
+router.get('/starred', UserController.getAllStarred)
+router.get('/starred/search', UserController.getRepoByFilter)
+router.post('/create', UserController.createRepo)
+router.get('/:username', UserController.getRepoByUsername)
+router.delete('/unstar/:username/:reponame', UserController.unstarRepo)
 
 module.exports = router
