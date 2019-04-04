@@ -9,7 +9,7 @@ function search(val) {
     $.ajax({
         url: `${baseUrl}/users/starred/search?name=${val}`,
         method: 'GET',
-        headers: { token: localStorage.getItem('token')}
+        headers: { token: localStorage.getItem('token') }
     })
         .done(function (repo) {
             let html = ''
@@ -28,7 +28,7 @@ function search_user(val) {
     $.ajax({
         url: `${baseUrl}/users/${val}`,
         method: 'GET',
-        headers: { token: localStorage.getItem('token')}
+        headers: { token: localStorage.getItem('token') }
     })
         .done(function (repo) {
             let html = ''
@@ -53,7 +53,7 @@ function star() {
     $.ajax({
         url: `${baseUrl}/users/starred`,
         method: 'GET',
-        headers: { "token": localStorage.getItem('token')}
+        headers: { "token": localStorage.getItem('token') }
     })
         .done(function (repo) {
             let html = ''
@@ -72,7 +72,7 @@ function unstar(val) {
     $.ajax({
         url: `${baseUrl}/users/unstar/willyprayogo26/${val}`,
         method: 'DELETE',
-        headers: { token: localStorage.getItem('token')}
+        headers: { token: localStorage.getItem('token') }
     })
         .done(function (repo) {
             Swal.fire({
@@ -108,7 +108,7 @@ function onSignIn(googleUser) {
                 localStorage.setItem('email', response.email)
                 localStorage.setItem('picture', response.picture)
 
-               star()
+                star()
             })
             .fail(err => {
                 console.log(err)
